@@ -1,0 +1,203 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── DESIGN TOKENS ──────────────────────────────────────────────── */
+:root {
+  --color-bg:      #0A0E16;
+  --color-surface: #111827;
+  --color-accent:  #F5C518;
+  --color-accent2: #E8B000;
+  --color-text:    #EEEEF0;
+  --color-muted:   #6B7280;
+  --color-border:  #1F2D42;
+  --color-success: #22C55E;
+  --statusbar-height: 36px;
+  --nav-height: 64px;
+  --max-w: 1152px;
+}
+
+/* ─── BASE RESET ─────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  scroll-behavior: smooth;
+  background: var(--color-bg);
+}
+
+body {
+  font-family: 'Space Grotesk', sans-serif;
+  background: var(--color-bg);
+  color: var(--color-text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  position: relative;
+}
+
+/* ─── GRAIN OVERLAY ──────────────────────────────────────────────── */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9998;
+  opacity: 0.028;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 256px 256px;
+}
+
+/* ─── TYPOGRAPHY HELPERS ─────────────────────────────────────────── */
+.font-mono { font-family: 'IBM Plex Mono', monospace; }
+
+.text-outline {
+  -webkit-text-stroke: 1.5px var(--color-accent);
+  color: transparent;
+  display: inline;
+}
+
+/* ─── SECTION LABEL ─────────────────────────────────────────────── */
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.6rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  color: var(--color-accent);
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+.section-label::before {
+  content: '';
+  display: inline-block;
+  width: 32px;
+  height: 1px;
+  background: var(--color-accent);
+  flex-shrink: 0;
+}
+
+/* ─── TECHNICAL TAGS ─────────────────────────────────────────────── */
+.tag-chip {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  border: 1px solid var(--color-border);
+  color: var(--color-accent);
+  padding: 3px 9px;
+  display: inline-block;
+  transition: border-color 0.2s, background 0.2s;
+}
+.tag-chip:hover {
+  border-color: var(--color-accent);
+  background: rgba(245, 197, 24, 0.06);
+}
+
+/* ─── INDUSTRIAL CLIP CORNER ─────────────────────────────────────── */
+.clip-corner {
+  clip-path: polygon(
+    0 0,
+    calc(100% - 18px) 0,
+    100% 18px,
+    100% 100%,
+    18px 100%,
+    0 calc(100% - 18px)
+  );
+}
+.clip-corner-sm {
+  clip-path: polygon(
+    0 0,
+    calc(100% - 12px) 0,
+    100% 12px,
+    100% 100%,
+    12px 100%,
+    0 calc(100% - 12px)
+  );
+}
+
+/* ─── SCROLLBAR ──────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--color-bg); }
+::-webkit-scrollbar-thumb { background: var(--color-border); }
+::-webkit-scrollbar-thumb:hover { background: var(--color-accent); }
+
+/* ─── ANIMATIONS ─────────────────────────────────────────────────── */
+@keyframes ticker {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes scanline {
+  0%   { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(34,197,94,0.6); }
+  50%       { opacity: 0.7; box-shadow: 0 0 0 4px rgba(34,197,94,0); }
+}
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+.anim-fade-up {
+  opacity: 0;
+  animation: fadeUp 0.7s cubic-bezier(0.22,1,0.36,1) forwards;
+}
+.anim-fade-in {
+  opacity: 0;
+  animation: fadeIn 0.6s ease forwards;
+}
+
+.d-0  { animation-delay: 0ms; }
+.d-1  { animation-delay: 80ms; }
+.d-2  { animation-delay: 160ms; }
+.d-3  { animation-delay: 240ms; }
+.d-4  { animation-delay: 320ms; }
+.d-5  { animation-delay: 400ms; }
+.d-6  { animation-delay: 480ms; }
+
+.cursor-blink::after {
+  content: '▌';
+  color: var(--color-accent);
+  animation: blink 1s step-end infinite;
+}
+
+/* ─── SECTION PADDING ────────────────────────────────────────────── */
+.section-pad { padding: 6rem 0; }
+
+@media (max-width: 768px) {
+  .section-pad { padding: 4rem 0; }
+}
+
+/* ─── ACCENT LINE ────────────────────────────────────────────────── */
+.accent-rule {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, var(--color-accent) 0%, transparent 60%);
+  margin-bottom: 3rem;
+}
+
+/* ─── HOVER CARD ─────────────────────────────────────────────────── */
+.hover-card {
+  transition: transform 0.25s cubic-bezier(0.22,1,0.36,1),
+              border-color 0.25s ease,
+              box-shadow 0.25s ease;
+}
+.hover-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--color-accent) !important;
+  box-shadow: 0 8px 32px rgba(245,197,24,0.08);
+}
