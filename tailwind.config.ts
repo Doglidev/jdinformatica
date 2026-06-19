@@ -5,17 +5,18 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        bg: '#0D1117',
-        surface: '#1A2744',
-        accent: '#F5C518',
-        'jd-text': '#F0F0F0',
-        muted: '#8A8FA0',
-        'jd-border': '#2E3A52',
-        success: '#22C55E',
+        bg:         '#0A0E16',
+        surface:    '#111827',
+        accent:     '#F5C518',
+        accent2:    '#E8B000',
+        'jd-text':  '#EEEEF0',
+        muted:      '#8B8FA0',
+        'jd-border':'#1F2D42',
+        success:    '#22C55E',
       },
       fontFamily: {
-        sans: ['"Space Grotesk"', 'sans-serif'],
-        mono: ['"IBM Plex Mono"', 'monospace'],
+        sans: ['var(--font-space-grotesk)', 'Space Grotesk', 'sans-serif'],
+        mono: ['var(--font-ibm-plex-mono)', 'IBM Plex Mono', 'monospace'],
       },
     },
   },

@@ -1,7 +1,9 @@
 import StatusBar from '@/components/StatusBar';
 import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
+import ScrollReveal from '@/components/ScrollReveal';
 import Hero from '@/sections/Hero';
+import Equipo from '@/sections/Equipo';
 import Problemas from '@/sections/Problemas';
 import Servicios from '@/sections/Servicios';
 import Rubros from '@/sections/Rubros';
@@ -12,15 +14,13 @@ import Contacto from '@/sections/Contacto';
 export default function HomePage() {
   return (
     <>
-      {/* Fixed statusbar takes 36px at top */}
       <StatusBar />
-
-      {/* Push content below fixed statusbar */}
+      <ScrollReveal />
       <div style={{ paddingTop: 'var(--statusbar-height)' }}>
-        {/* Sticky nav sits right below statusbar */}
         <Nav />
-        <main>
+        <main id="main-content">
           <Hero />
+          <Equipo />
           <Problemas />
           <Servicios />
           <Rubros />

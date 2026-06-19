@@ -3,13 +3,15 @@
 import { useState, useRef, useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
 
+const MAX_CHARS = 1000;
+const STREAM_TIMEOUT_MS = 30_000;
+
 export default function DiagnosticoWidget() {
   const [problema, setProblema] = useState('');
   const [respuesta, setRespuesta] = useState('');
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
   const respuestaRef = useRef<HTMLDivElement>(null);
-
   const waNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? '5493573431223';
 
   async function handleDiagnostico() {
@@ -31,15 +33,32 @@ export default function DiagnosticoWidget() {
       const decoder = new TextDecoder();
       let full = '';
 
-      while (true) {
-        const { done: streamDone, value } = await reader.read();
-        if (streamDone) break;
-        const chunk = decoder.decode(value, { stream: true });
-        full += chunk;
-        setRespuesta(full);
-      }
+      // Timeout de 30s por si el stream cuelga (iOS Safari < 16)
+      const timeoutId = setTimeout(() => {
+        reader.cancel();
+        setRespuesta((prev) =>
+          prev
+            ? prev + '\n\n(Tiempo de espera agotado. Por favor contactanos directamente.)'
+            : 'No pudimos procesar tu consulta ahora. Por favor contactanos directamente.'
+        );
+        setDone(true);
+        setLoading(false);
+      }, STREAM_TIMEOUT_MS);
 
-      setDone(true);
+      try {
+        while (true) {
+          const { done: streamDone, value } = await reader.read();
+          if (streamDone) break;
+          full += decoder.decode(value, { stream: true });
+          setRespuesta(full);
+        }
+        clearTimeout(timeoutId);
+        setDone(true);
+      } catch {
+        clearTimeout(timeoutId);
+        setRespuesta(full || 'No pudimos procesar tu consulta ahora. Por favor contactanos directamente.');
+        setDone(true);
+      }
     } catch {
       setRespuesta('No pudimos procesar tu consulta ahora. Por favor contactanos directamente.');
       setDone(true);
@@ -53,6 +72,8 @@ export default function DiagnosticoWidget() {
       respuestaRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
   }, [respuesta]);
+
+  const charsLeft = MAX_CHARS - problema.length;
 
   return (
     <div
@@ -70,11 +91,16 @@ export default function DiagnosticoWidget() {
         Describí tu problema de IT y te damos un diagnóstico rápido.
       </p>
 
+      <label htmlFor="diagnostico-problema" className="sr-only">
+        Describí tu problema de IT
+      </label>
       <textarea
+        id="diagnostico-problema"
         value={problema}
-        onChange={(e) => setProblema(e.target.value)}
+        onChange={(e) => setProblema(e.target.value.slice(0, MAX_CHARS))}
         placeholder="Ej: Mi PC tarda 10 minutos en arrancar y se congela cuando abro el sistema contable..."
         rows={4}
+        maxLength={MAX_CHARS}
         className="w-full p-3 font-sans text-sm resize-none border outline-none focus:border-accent transition-colors"
         style={{
           backgroundColor: 'var(--color-surface)',
@@ -83,7 +109,16 @@ export default function DiagnosticoWidget() {
         }}
         onFocus={(e) => (e.target.style.borderColor = 'var(--color-accent)')}
         onBlur={(e) => (e.target.style.borderColor = 'var(--color-border)')}
+        aria-describedby="diagnostico-counter"
       />
+      <p
+        id="diagnostico-counter"
+        className="font-mono text-xs text-right mt-1"
+        style={{ color: charsLeft < 100 ? '#ef4444' : 'var(--color-muted)' }}
+        aria-live="polite"
+      >
+        {charsLeft} caracteres restantes
+      </p>
 
       <button
         onClick={handleDiagnostico}
@@ -93,7 +128,7 @@ export default function DiagnosticoWidget() {
       >
         {loading ? (
           <>
-            <Loader2 size={16} className="animate-spin" /> Analizando...
+            <Loader2 size={16} className="animate-spin" aria-hidden="true" /> Analizando...
           </>
         ) : (
           'Obtener diagnóstico rápido →'
@@ -107,10 +142,13 @@ export default function DiagnosticoWidget() {
           style={{ borderColor: 'var(--color-accent)', backgroundColor: 'var(--color-surface)' }}
         >
           <p
-            className={`font-sans text-sm leading-relaxed ${!done ? 'cursor-blink' : ''}`}
+            className="font-sans text-sm leading-relaxed"
             style={{ color: 'var(--color-text)', whiteSpace: 'pre-wrap' }}
+            aria-live="polite"
+            aria-busy={!done}
           >
             {respuesta}
+            {!done && <span className="cursor-blink-indicator" aria-hidden="true" />}
           </p>
 
           {done && (
@@ -124,6 +162,7 @@ export default function DiagnosticoWidget() {
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 px-4 py-2 font-sans font-semibold text-xs transition-opacity hover:opacity-80"
                 style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-bg)' }}
+                aria-label="Contactar por WhatsApp para resolver el problema"
               >
                 Sí, escribinos por WhatsApp →
               </a>
