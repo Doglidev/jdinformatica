@@ -23,7 +23,7 @@ const jsonLd = {
   description:
     'Soporte IT para PyMEs en Córdoba Capital. Mantenimiento de equipos, redes WiFi, backup y seguridad informática.',
   url: 'https://jdinformatica.com.ar',
-  telephone: '+5403573431223',
+  telephone: '+543573431223',
   email: 'contacto@jdinformatica.com.ar',
   address: {
     '@type': 'PostalAddress',

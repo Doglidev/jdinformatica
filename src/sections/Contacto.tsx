@@ -39,6 +39,11 @@ export default function Contacto() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),
       });
+      if (res.status === 429) {
+        setFieldError('Demasiados envíos. Esperá un minuto e intentá de nuevo.');
+        setStatus('idle');
+        return;
+      }
       setStatus(res.ok ? 'ok' : 'error');
     } catch {
       setStatus('error');

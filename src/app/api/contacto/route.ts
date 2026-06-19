@@ -11,10 +11,20 @@ export async function POST(req: NextRequest) {
     'unknown';
 
   if (!checkRateLimit(ip, 10, 60_000)) {
-    return NextResponse.json({ error: 'Demasiados envíos. Esperá un minuto e intentá de nuevo.' }, { status: 429 });
+    return NextResponse.json(
+      { error: 'rate_limit', message: 'Demasiados envíos. Esperá un minuto e intentá de nuevo.' },
+      { status: 429 }
+    );
   }
 
-  const { nombre, empresa, email, telefono, mensaje } = await req.json();
+  let body: Record<string, string>;
+  try {
+    body = await req.json();
+  } catch {
+    return NextResponse.json({ error: 'JSON inválido' }, { status: 400 });
+  }
+
+  const { nombre, empresa, email, telefono, mensaje } = body;
 
   if (!nombre?.trim() || !telefono?.trim() || !mensaje?.trim()) {
     return NextResponse.json({ error: 'Campos requeridos faltantes' }, { status: 400 });

@@ -2,8 +2,6 @@ import { GoogleGenAI } from '@google/genai';
 import { NextRequest } from 'next/server';
 import { checkRateLimit } from '@/lib/rateLimit';
 
-const ai = new GoogleGenAI({ apiKey: process.env.GOOGLE_API_KEY! });
-
 const SYSTEM_INSTRUCTION = `Sos el asistente técnico de JD Informática, empresa de soporte IT en Córdoba, Argentina.
 Cuando el usuario describe un problema, respondé en 3-4 oraciones:
 1. Diagnosticá brevemente qué puede estar pasando
@@ -15,7 +13,14 @@ Siempre en español rioplatense (Argentina).`;
 const MAX_INPUT_LENGTH = 1000;
 
 export async function POST(req: NextRequest) {
-  // C-01: rate limit — 5 requests per minute per IP
+  // Guard: sin API key el módulo no puede funcionar
+  if (!process.env.GOOGLE_API_KEY) {
+    return new Response(
+      'Servicio no disponible temporalmente. Contactanos directamente por WhatsApp.',
+      { status: 503 }
+    );
+  }
+
   const ip =
     req.headers.get('x-forwarded-for')?.split(',')[0].trim() ??
     req.headers.get('x-real-ip') ??
@@ -27,18 +32,25 @@ export async function POST(req: NextRequest) {
     });
   }
 
-  const { problema } = (await req.json()) as { problema: string };
+  let body: { problema?: string };
+  try {
+    body = await req.json();
+  } catch {
+    return new Response('JSON inválido', { status: 400 });
+  }
 
-  // C-02: validate and bound input length before touching the AI
+  const { problema } = body;
+
   if (!problema?.trim()) {
     return new Response('Problema requerido', { status: 400 });
   }
 
   const sanitized = problema.trim().slice(0, MAX_INPUT_LENGTH);
 
+  const ai = new GoogleGenAI({ apiKey: process.env.GOOGLE_API_KEY });
+
   let stream;
   try {
-    // C-02: system instruction is passed via config, never concatenated with user text
     stream = await ai.models.generateContentStream({
       model: 'gemini-2.0-flash-lite',
       config: { systemInstruction: SYSTEM_INSTRUCTION },

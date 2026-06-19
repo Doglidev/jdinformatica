@@ -85,7 +85,7 @@ export default function Problemas() {
                 className="w-10 h-10 flex items-center justify-center mb-5 clip-corner-sm"
                 style={{ backgroundColor: 'rgba(245,197,24,0.10)' }}
               >
-                <Icon size={20} style={{ color: 'var(--color-accent)' }} />
+                <Icon size={20} style={{ color: 'var(--color-accent)' }} aria-hidden={true} />
               </div>
 
               <h3

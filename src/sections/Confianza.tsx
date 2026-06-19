@@ -1,8 +1,8 @@
 const items = [
-  { num: '8+',   label: 'Años en el mercado',         note: 'desde 2016' },
-  { num: '150+', label: 'Clientes en Córdoba',         note: 'PyMEs activas' },
-  { num: 'L–V',  label: '8hs a 20hs + guardias',       note: 'atención directa' },
-  { num: '$0',   label: 'Contratos mínimos',           note: 'sin letra chica' },
+  { num: '8+',   label: 'Años en el mercado',   note: 'desde 2016',      ariaLabel: undefined },
+  { num: '150+', label: 'Clientes en Córdoba',  note: 'PyMEs activas',   ariaLabel: undefined },
+  { num: 'L–V',  label: '8hs a 20hs + guardias', note: 'atención directa', ariaLabel: 'Lunes a Viernes' },
+  { num: '$0',   label: 'Contratos mínimos',    note: 'sin letra chica', ariaLabel: undefined },
 ];
 
 export default function Confianza() {
@@ -35,7 +35,7 @@ export default function Confianza() {
         <div className="accent-rule" />
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-px" style={{ backgroundColor: 'var(--color-border)' }}>
-          {items.map(({ num, label, note }, i) => (
+          {items.map(({ num, label, note, ariaLabel }, i) => (
             <div
               key={num}
               className={`p-7 relative overflow-hidden anim-fade-up d-${i + 2}`}
@@ -50,6 +50,7 @@ export default function Confianza() {
               <p
                 className="font-mono font-bold leading-none mb-3"
                 style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', color: 'var(--color-accent)' }}
+                aria-label={ariaLabel}
               >
                 {num}
               </p>
