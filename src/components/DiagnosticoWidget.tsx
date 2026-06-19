@@ -62,7 +62,7 @@ export default function DiagnosticoWidget() {
       <div className="flex items-center gap-2 mb-4">
         <span className="tag-chip">[AI DIAGNÓSTICO]</span>
         <span className="font-mono text-xs" style={{ color: 'var(--color-muted)' }}>
-          powered by Claude
+          powered by Gemini
         </span>
       </div>
 
