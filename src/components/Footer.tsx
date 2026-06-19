@@ -80,11 +80,11 @@ export default function Footer() {
                 WhatsApp
               </a>
               <a
-                href="mailto:contacto@jdinformatica.com.ar"
+                href="mailto:contacto.jdinformatica@gmail.com"
                 className="font-sans text-sm hover:text-accent transition-colors"
                 style={{ color: 'var(--color-muted)' }}
               >
-                contacto@jdinformatica.com.ar
+                contacto.jdinformatica@gmail.com
               </a>
             </div>
           </div>
