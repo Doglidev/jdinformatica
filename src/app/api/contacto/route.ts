@@ -1,9 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { checkRateLimit } from '@/lib/rateLimit';
 
 const LIMITS = { nombre: 100, empresa: 150, email: 254, telefono: 30, mensaje: 2000 };
 
 export async function POST(req: NextRequest) {
+  const ip =
+    req.headers.get('x-forwarded-for')?.split(',')[0].trim() ??
+    req.headers.get('x-real-ip') ??
+    'unknown';
+
+  if (!checkRateLimit(ip, 10, 60_000)) {
+    return NextResponse.json({ error: 'Demasiados envíos. Esperá un minuto e intentá de nuevo.' }, { status: 429 });
+  }
+
   const { nombre, empresa, email, telefono, mensaje } = await req.json();
 
   if (!nombre?.trim() || !telefono?.trim() || !mensaje?.trim()) {

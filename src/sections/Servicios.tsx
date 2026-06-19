@@ -12,16 +12,21 @@ export default function Servicios() {
     <section
       id="servicios"
       className="section-pad"
-      style={{ backgroundColor: 'var(--color-bg)' }}
+      style={{ backgroundColor: 'var(--color-bg)', borderTop: '1px solid var(--color-border)' }}
+      aria-labelledby="servicios-title"
     >
       <div className="max-w-6xl mx-auto px-4">
 
         <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-16">
 
           {/* Left: sticky header */}
-          <div className="lg:sticky lg:top-28 lg:self-start">
+          <div
+            className="lg:sticky lg:self-start"
+            style={{ top: 'calc(var(--statusbar-height) + var(--nav-height) + 0.75rem)' }}
+          >
             <div className="section-label anim-fade-up d-0">LO QUE HACEMOS</div>
             <h2
+              id="servicios-title"
               className="font-sans font-bold mb-4 anim-fade-up d-1"
               style={{ fontSize: 'clamp(2rem, 3.5vw, 2.8rem)', color: 'var(--color-text)' }}
             >

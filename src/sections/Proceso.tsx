@@ -10,7 +10,8 @@ export default function Proceso() {
     <section
       id="proceso"
       className="section-pad"
-      style={{ backgroundColor: 'var(--color-bg)' }}
+      style={{ backgroundColor: 'var(--color-bg)', borderTop: '1px solid var(--color-border)' }}
+      aria-labelledby="proceso-title"
     >
       <div className="max-w-6xl mx-auto px-4">
 
@@ -18,6 +19,7 @@ export default function Proceso() {
 
         <div className="flex items-end justify-between mb-3 anim-fade-up d-1">
           <h2
+            id="proceso-title"
             className="font-sans font-bold"
             style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', color: 'var(--color-text)' }}
           >
@@ -43,7 +45,7 @@ export default function Proceso() {
 
           <div className="grid grid-cols-4 gap-4 relative">
             {steps.map(({ num, tag, desc }, i) => (
-              <div key={num} className="flex flex-col items-center text-center px-2">
+              <div key={num} className="flex flex-col items-center text-center px-2 relative">
 
                 {/* Circle node */}
                 <div

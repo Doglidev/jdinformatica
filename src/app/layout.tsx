@@ -18,7 +18,7 @@ const ibmPlexMono = IBM_Plex_Mono({
 
 const jsonLd = {
   '@context': 'https://schema.org',
-  '@type': 'LocalBusiness',
+  '@type': 'ProfessionalService',
   name: 'JD Informática',
   description:
     'Soporte IT para PyMEs en Córdoba Capital. Mantenimiento de equipos, redes WiFi, backup y seguridad informática.',
@@ -54,6 +54,7 @@ export const metadata: Metadata = {
     canonical: 'https://jdinformatica.com.ar',
   },
   openGraph: {
+    siteName: 'JD Informática',
     title: 'JD Informática | Soporte IT para PyMEs en Córdoba',
     description: 'Tu departamento IT, sin tener que contratar uno.',
     locale: 'es_AR',

@@ -71,23 +71,15 @@ export default function Hero() {
     <section
       className="section-pad relative overflow-hidden"
       style={{ backgroundColor: 'var(--color-bg)' }}
+      aria-labelledby="hero-title"
     >
       {/* Dot-grid decorative background — right side */}
       <div className="absolute right-0 top-0 bottom-0 w-1/2 pointer-events-none overflow-hidden">
         <TechGrid />
       </div>
 
-      {/* Faint horizontal scan-rule */}
-      <div
-        className="absolute left-0 right-0 pointer-events-none"
-        style={{
-          top: '50%',
-          height: '1px',
-          background: 'linear-gradient(90deg, transparent 0%, rgba(245,197,24,0.08) 30%, transparent 100%)',
-        }}
-      />
 
-      <div className="relative max-w-6xl mx-auto px-4">
+<div className="relative max-w-6xl mx-auto px-4">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_420px] gap-16 items-start">
 
           {/* ─── Left col ───────────────────────────────────── */}
@@ -99,6 +91,7 @@ export default function Hero() {
 
             {/* H1 — impactante */}
             <h1
+              id="hero-title"
               className="font-sans font-bold leading-[0.95] tracking-tight mb-7 anim-fade-up d-1"
               style={{ fontSize: 'clamp(3rem, 6.5vw, 5.2rem)', color: 'var(--color-text)' }}
             >
@@ -153,7 +146,10 @@ export default function Hero() {
           </div>
 
           {/* ─── Right col — terminal services ─────────────── */}
-          <div className="anim-fade-up d-2 lg:sticky lg:top-28">
+          <div
+            className="anim-fade-up d-2 lg:sticky"
+            style={{ top: 'calc(var(--statusbar-height) + var(--nav-height) + 0.75rem)' }}
+          >
             {/* Terminal header */}
             <div
               className="flex items-center gap-2 px-4 py-2.5 border-b"

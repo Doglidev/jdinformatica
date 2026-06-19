@@ -12,7 +12,8 @@ export default function Rubros() {
     <section
       id="rubros"
       className="section-pad"
-      style={{ backgroundColor: 'var(--color-surface)' }}
+      style={{ backgroundColor: 'var(--color-bg)', borderTop: '1px solid var(--color-border)' }}
+      aria-labelledby="rubros-title"
     >
       <div className="max-w-6xl mx-auto px-4">
 
@@ -20,6 +21,7 @@ export default function Rubros() {
 
         <div className="flex items-end justify-between mb-3 anim-fade-up d-1">
           <h2
+            id="rubros-title"
             className="font-sans font-bold"
             style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', color: 'var(--color-text)' }}
           >
@@ -38,7 +40,7 @@ export default function Rubros() {
               key={num}
               className={`hover-card clip-corner p-6 border cursor-default relative overflow-hidden anim-fade-up d-${i + 2}`}
               style={{
-                backgroundColor: 'var(--color-bg)',
+                backgroundColor: 'var(--color-surface)',
                 borderColor: 'var(--color-border)',
               }}
             >
@@ -57,12 +59,6 @@ export default function Rubros() {
 
               {/* Content */}
               <div className="relative">
-                <span
-                  className="font-mono font-semibold block mb-4"
-                  style={{ fontSize: '1rem', color: 'var(--color-accent)' }}
-                >
-                  {num}
-                </span>
                 <h3
                   className="font-sans font-semibold text-base mb-3 leading-snug"
                   style={{ color: 'var(--color-text)' }}

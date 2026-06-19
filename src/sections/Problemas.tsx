@@ -35,7 +35,8 @@ export default function Problemas() {
   return (
     <section
       className="section-pad"
-      style={{ backgroundColor: 'var(--color-surface)' }}
+      style={{ backgroundColor: 'var(--color-bg)', borderTop: '1px solid var(--color-border)' }}
+      aria-labelledby="problemas-title"
     >
       <div className="max-w-6xl mx-auto px-4">
 
@@ -43,6 +44,7 @@ export default function Problemas() {
 
         <div className="flex items-end justify-between mb-3 anim-fade-up d-1">
           <h2
+            id="problemas-title"
             className="font-sans font-bold"
             style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', color: 'var(--color-text)' }}
           >
@@ -58,7 +60,7 @@ export default function Problemas() {
               key={title}
               className={`hover-card p-7 cursor-default anim-fade-up d-${i + 2}`}
               style={{
-                backgroundColor: 'var(--color-bg)',
+                backgroundColor: 'var(--color-surface)',
                 borderLeft: '3px solid var(--color-border)',
                 position: 'relative',
                 overflow: 'hidden',

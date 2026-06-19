@@ -1,6 +1,14 @@
 export default function Footer() {
   const year = new Date().getFullYear();
 
+  const navLinks = [
+    { href: '#equipo',    label: 'Equipo' },
+    { href: '#servicios', label: 'Servicios' },
+    { href: '#rubros',    label: 'Rubros' },
+    { href: '#proceso',   label: 'Proceso' },
+    { href: '#contacto',  label: 'Contacto' },
+  ];
+
   return (
     <footer
       className="border-t"
@@ -33,14 +41,14 @@ export default function Footer() {
               Navegación
             </p>
             <div className="flex flex-col gap-2">
-              {['#servicios', '#rubros', '#proceso', '#contacto'].map((href) => (
+              {navLinks.map(({ href, label }) => (
                 <a
                   key={href}
                   href={href}
                   className="font-sans text-sm hover:text-accent transition-colors"
                   style={{ color: 'var(--color-muted)' }}
                 >
-                  {href.replace('#', '').charAt(0).toUpperCase() + href.replace('#', '').slice(1)}
+                  {label}
                 </a>
               ))}
             </div>
@@ -87,7 +95,7 @@ export default function Footer() {
           className="mt-10 pt-6 border-t"
           style={{ borderColor: 'var(--color-border)' }}
         >
-          <p className="font-mono text-xs" style={{ color: 'var(--color-border)' }}>
+          <p className="font-mono text-xs" style={{ color: 'var(--color-muted)' }}>
             {'// JD Informática © '}{year}{' · Córdoba, Argentina'}
           </p>
         </div>

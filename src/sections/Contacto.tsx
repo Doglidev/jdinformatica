@@ -67,12 +67,13 @@ export default function Contacto() {
       id="contacto"
       className="section-pad border-t"
       style={{ backgroundColor: 'var(--color-bg)', borderColor: 'var(--color-border)' }}
+      aria-labelledby="contacto-title"
     >
       <div className="max-w-6xl mx-auto px-4">
         <p className="font-mono text-xs tracking-widest mb-2" style={{ color: 'var(--color-accent)' }}>
           // CONTACTO
         </p>
-        <h2 className="font-sans font-semibold text-3xl md:text-4xl mb-12" style={{ color: 'var(--color-text)' }}>
+        <h2 id="contacto-title" className="font-sans font-semibold text-3xl md:text-4xl mb-12" style={{ color: 'var(--color-text)' }}>
           Contanos tu problema
         </h2>
 
@@ -102,6 +103,7 @@ export default function Contacto() {
                   <input
                     id="contacto-nombre"
                     required
+                    aria-required="true"
                     type="text"
                     placeholder="Nombre *"
                     maxLength={100}
@@ -154,6 +156,7 @@ export default function Contacto() {
                   <input
                     id="contacto-telefono"
                     required
+                    aria-required="true"
                     type="tel"
                     placeholder="Teléfono * (ej: 3573 431223)"
                     maxLength={30}
@@ -172,6 +175,7 @@ export default function Contacto() {
                   <textarea
                     id="contacto-mensaje"
                     required
+                    aria-required="true"
                     rows={4}
                     placeholder="Mensaje * — describí tu problema o consulta"
                     maxLength={2000}

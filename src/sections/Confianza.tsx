@@ -9,7 +9,8 @@ export default function Confianza() {
   return (
     <section
       className="section-pad"
-      style={{ backgroundColor: 'var(--color-surface)' }}
+      style={{ backgroundColor: 'var(--color-bg)', borderTop: '1px solid var(--color-border)' }}
+      aria-labelledby="confianza-title"
     >
       <div className="max-w-6xl mx-auto px-4">
 
@@ -17,6 +18,7 @@ export default function Confianza() {
 
         <div className="flex items-end justify-between mb-3 anim-fade-up d-1">
           <h2
+            id="confianza-title"
             className="font-sans font-bold"
             style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', color: 'var(--color-text)' }}
           >
@@ -37,12 +39,12 @@ export default function Confianza() {
             <div
               key={num}
               className={`p-7 relative overflow-hidden anim-fade-up d-${i + 2}`}
-              style={{ backgroundColor: 'var(--color-bg)' }}
+              style={{ backgroundColor: 'var(--color-surface)' }}
             >
               {/* Accent line top */}
               <div
                 className="absolute top-0 left-0 right-0"
-                style={{ height: '2px', background: i === 0 ? 'var(--color-accent)' : 'transparent' }}
+                style={{ height: '2px', background: 'var(--color-accent)' }}
               />
 
               <p

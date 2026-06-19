@@ -47,7 +47,7 @@ export default function Equipo() {
   }, []);
 
   return (
-    <div id="equipo" ref={containerRef} style={{ height: `${slides.length * 100}vh` }}>
+    <div id="equipo" ref={containerRef} role="region" aria-label="Equipo" style={{ height: `${slides.length * 100}vh` }}>
       <div
         className="sticky overflow-hidden"
         style={{ top: 0, height: '100vh', backgroundColor: 'var(--color-bg)' }}
