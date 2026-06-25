@@ -3,166 +3,229 @@
 import { useRef, useEffect, useState } from 'react';
 import Image from 'next/image';
 import { ChevronDown } from 'lucide-react';
+import { scrollToElement } from '@/lib/smoothScroll';
+import Problemas from './Problemas';
+import Servicios from './Servicios';
+import Rubros from './Rubros';
+import Proceso from './Proceso';
+import Confianza from './Confianza';
+import Contacto from './Contacto';
 
-const slides = [
-  {
-    tag: 'QUIÉNES SOMOS',
-    title: 'Más de 8 años resolviendo problemas reales',
-    desc: 'Somos un equipo técnico con base en Córdoba Capital. No somos una franquicia ni un call center — conocemos a cada cliente por su nombre.',
-    img: '/team/foto-01.jpg',
-  },
-  {
-    tag: 'EN EL CAMPO',
-    title: 'Presentes cuando más nos necesitás',
-    desc: 'No solo respondemos por teléfono. Llegamos a tu empresa, evaluamos el problema en persona y lo resolvemos el mismo día.',
-    img: '/team/foto-01.jpg',
-  },
-  {
-    tag: 'NUESTRO EQUIPO',
-    title: 'Técnicos certificados, trato humano',
-    desc: '150+ empresas cordobesas confían en nosotros. Sin letra chica, sin contratos mínimos, sin excusas.',
-    img: '/team/foto-01.jpg',
-  },
+const IMAGES = [
+  '/hero_fondo_2.png',
+  '/hero_fondo_3.png',
+  '/hero_fondo_4.png',
+  '/hero_fondo_5.jpg',
+  '/hero_fondo_6.jpg',
+  '/hero_fondo_7.jpg',
+  '/team/foto-01.jpg',
 ];
+
+const SLIDE_IDS = [
+  'slide-equipo',
+  'slide-problemas',
+  'slide-servicios',
+  'slide-rubros',
+  'slide-proceso',
+  'slide-confianza',
+  'slide-contacto',
+];
+
+// Base glass variables — sections rendered semi-transparent so the bg image shows through
+const glass = {
+  '--color-bg': 'rgba(10,14,22,0.35)',
+  '--color-surface': 'rgba(10,14,22,0.55)',
+  '--color-border': 'rgba(31,45,66,0.7)',
+} as React.CSSProperties;
+
+// Full-screen slide: 100dvh, centered content, glass background
+const slide: React.CSSProperties = {
+  ...glass,
+  minHeight: '100dvh',
+  width: '100%',
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'center',
+};
 
 export default function Equipo() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [activeIdx, setActiveIdx] = useState(0);
+  const [activeImg, setActiveImg] = useState(0);
+  const activeImgRef = useRef(0);
 
+  // Switch background image as each slide enters the viewport
   useEffect(() => {
-    const onScroll = () => {
-      const el = containerRef.current;
+    const observers: IntersectionObserver[] = [];
+    SLIDE_IDS.forEach((id, i) => {
+      const el = document.getElementById(id);
       if (!el) return;
-      const { top, height } = el.getBoundingClientRect();
-      const scrollable = height - window.innerHeight;
-      if (scrollable <= 0) return;
-      const scrolled = -top;
-      const p = Math.max(0, Math.min(1, scrolled / scrollable));
-      const idx = Math.min(slides.length - 1, Math.floor(p * slides.length));
-      setActiveIdx(idx);
+      const obs = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            activeImgRef.current = i;
+            setActiveImg(i);
+          }
+        },
+        { threshold: 0.25 }
+      );
+      obs.observe(el);
+      observers.push(obs);
+    });
+    return () => observers.forEach(o => o.disconnect());
+  }, []);
+
+  // Snap scroll between all slides (and back to Hero from the first)
+  useEffect(() => {
+    const lock  = { active: false };
+    const ANIM  = 1100;
+    const GUARD = ANIM + 400; // 1500ms: animation + buffer for IntersectionObserver
+
+    let touchStartY = 0;
+
+    const isInEquipo = () => {
+      const el = containerRef.current;
+      if (!el) return false;
+      const { top, bottom } = el.getBoundingClientRect();
+      return top < window.innerHeight && bottom > 0;
     };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
-    return () => window.removeEventListener('scroll', onScroll);
+
+    const fire = (fn: () => void) => {
+      if (lock.active) return;
+      lock.active = true;
+      fn();
+      setTimeout(() => { lock.active = false; }, GUARD);
+    };
+
+    const snapToSlide = (idx: number) => fire(() => scrollToElement(SLIDE_IDS[idx], ANIM));
+    const snapToHero  = ()           => fire(() => scrollToElement('hero-section',  ANIM));
+
+    const onWheel = (e: WheelEvent) => {
+      if (!isInEquipo()) return;
+
+      const cur = activeImgRef.current;
+      const exitToFooter = e.deltaY > 0 && cur === SLIDE_IDS.length - 1;
+
+      // Block ALL wheel events while inside Equipo except "exit to footer"
+      if (!exitToFooter) e.preventDefault();
+
+      if (lock.active) return; // scroll blocked — animation in progress
+
+      if      (e.deltaY > 0 && cur < SLIDE_IDS.length - 1) snapToSlide(cur + 1);
+      else if (e.deltaY < 0 && cur > 0)                    snapToSlide(cur - 1);
+      else if (e.deltaY < 0 && cur === 0)                  snapToHero();
+    };
+
+    const onTouchStart = (e: TouchEvent) => { touchStartY = e.touches[0].clientY; };
+    const onTouchEnd   = (e: TouchEvent) => {
+      if (!isInEquipo() || lock.active) return;
+      const cur   = activeImgRef.current;
+      const delta = touchStartY - e.changedTouches[0].clientY;
+
+      if      (delta >  50 && cur < SLIDE_IDS.length - 1) snapToSlide(cur + 1);
+      else if (delta < -50 && cur > 0)                    snapToSlide(cur - 1);
+      else if (delta < -50 && cur === 0)                  snapToHero();
+    };
+
+    window.addEventListener('wheel', onWheel, { passive: false });
+    window.addEventListener('touchstart', onTouchStart, { passive: true });
+    window.addEventListener('touchend',   onTouchEnd,   { passive: true });
+    return () => {
+      window.removeEventListener('wheel', onWheel);
+      window.removeEventListener('touchstart', onTouchStart);
+      window.removeEventListener('touchend',   onTouchEnd);
+    };
   }, []);
 
   return (
-    <div id="equipo" ref={containerRef} role="region" aria-label="Equipo" style={{ height: `${slides.length * 100}vh` }}>
+    <div id="equipo" ref={containerRef} role="region" aria-label="Contenido principal" style={{ position: 'relative' }}>
+
+      {/* Sticky background — stays fixed behind all sections as the user scrolls */}
       <div
-        className="sticky overflow-hidden"
-        style={{ top: 0, height: '100vh', backgroundColor: 'var(--color-bg)' }}
+        aria-hidden="true"
+        style={{
+          position: 'sticky',
+          top: 0,
+          height: '100vh',
+          marginBottom: '-100vh',
+          zIndex: 0,
+          pointerEvents: 'none',
+          overflow: 'hidden',
+        }}
       >
-        {/* Image layers */}
-        {slides.map((slide, i) => (
+        {IMAGES.map((src, i) => (
           <div
             key={i}
-            className="absolute inset-0"
             style={{
-              opacity: activeIdx === i ? 1 : 0,
-              transform: activeIdx === i ? 'scale(1.04)' : 'scale(1)',
+              position: 'absolute',
+              inset: 0,
+              opacity: activeImg === i ? 1 : 0,
+              transform: activeImg === i ? 'scale(1.04)' : 'scale(1)',
               transition: 'opacity 0.85s cubic-bezier(0.4,0,0.2,1), transform 0.85s cubic-bezier(0.4,0,0.2,1)',
               willChange: 'opacity, transform',
             }}
           >
             <Image
-              src={slide.img}
-              alt={slide.tag}
+              src={src}
+              alt=""
               fill
-              style={{ objectFit: 'cover', objectPosition: 'center' }}
               priority={i === 0}
               sizes="100vw"
+              style={{ objectFit: 'cover', objectPosition: 'center' }}
             />
           </div>
         ))}
+        {/* Gradient overlays */}
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(10,14,22,0.97) 0%, rgba(10,14,22,0.82) 50%, rgba(10,14,22,0.65) 100%)' }} />
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, rgba(10,14,22,0.7) 0%, rgba(10,14,22,0.1) 60%, transparent 100%)' }} />
+      </div>
 
-        {/* Dark overlays */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{ background: 'linear-gradient(to top, rgba(10,14,22,0.96) 0%, rgba(10,14,22,0.55) 45%, rgba(10,14,22,0.15) 100%)' }}
-        />
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{ background: 'linear-gradient(to right, rgba(10,14,22,0.65) 0%, rgba(10,14,22,0.1) 55%, transparent 100%)' }}
-        />
+      {/* All sections in normal document flow, stacked above the sticky background */}
+      <div style={{ position: 'relative', zIndex: 1 }}>
 
-        {/* Slide counter */}
+        {/* Slide 1 — Equipo intro (fullscreen, hero-style) */}
         <div
-          className="absolute font-mono text-xs"
+          id="slide-equipo"
+          className="px-5 py-16 sm:px-8 sm:py-20 lg:px-12 lg:py-24"
           style={{
-            top: 'calc(var(--statusbar-height) + var(--nav-height) + 1.25rem)',
-            right: '2rem',
-            color: 'var(--color-muted)',
-            letterSpacing: '0.12em',
-            zIndex: 2,
+            position: 'relative',
+            minHeight: '100dvh',
+            width: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'flex-start',
           }}
         >
-          {String(activeIdx + 1).padStart(2, '0')} / {String(slides.length).padStart(2, '0')}
-        </div>
+          <div style={{ maxWidth: '580px' }}>
+            <div className="section-label">QUIÉNES SOMOS</div>
+            <h2
+              className="font-sans font-bold leading-tight"
+              style={{ fontSize: 'clamp(1.9rem, 4vw, 3.25rem)', color: 'var(--color-text)', marginBottom: '1rem' }}
+            >
+              Más de 8 años resolviendo problemas reales
+            </h2>
+            <p style={{ color: 'rgba(238,238,240,0.72)', fontSize: '1.05rem', lineHeight: 1.75, maxWidth: '460px' }}>
+              Somos un equipo técnico con base en Córdoba Capital. No somos una franquicia ni un call center — conocemos a cada cliente por su nombre.
+            </p>
+          </div>
 
-        {/* Text content */}
-        <div className="absolute inset-0 flex items-end" style={{ zIndex: 2 }}>
-          <div className="max-w-6xl mx-auto w-full px-8 relative" style={{ paddingBottom: '5rem' }}>
-            {slides.map((slide, i) => (
-              <div
-                key={i}
-                className="absolute"
-                style={{
-                  bottom: '5rem',
-                  left: '2rem',
-                  maxWidth: '580px',
-                  opacity: activeIdx === i ? 1 : 0,
-                  transform: `translateY(${activeIdx === i ? 0 : 22}px)`,
-                  transition: `opacity 0.6s ease ${activeIdx === i ? '0.25s' : '0s'}, transform 0.6s ease ${activeIdx === i ? '0.25s' : '0s'}`,
-                }}
-              >
-                <div className="section-label">{slide.tag}</div>
-                <h2
-                  className="font-sans font-bold leading-tight"
-                  style={{ fontSize: 'clamp(1.9rem, 4vw, 3.25rem)', color: 'var(--color-text)', marginBottom: '1rem' }}
-                >
-                  {slide.title}
-                </h2>
-                <p style={{ color: 'rgba(238,238,240,0.72)', fontSize: '1.05rem', lineHeight: 1.75, maxWidth: '460px' }}>
-                  {slide.desc}
-                </p>
-              </div>
-            ))}
-
-            {/* Progress lines */}
-            <div className="absolute flex flex-col gap-2 items-center" style={{ bottom: '5rem', right: '2rem' }}>
-              {slides.map((_, i) => (
-                <div
-                  key={i}
-                  style={{
-                    width: '2px',
-                    height: activeIdx === i ? '40px' : '12px',
-                    backgroundColor: activeIdx === i ? 'var(--color-accent)' : 'rgba(31,45,66,0.9)',
-                    transition: 'height 0.4s cubic-bezier(0.4,0,0.2,1), background-color 0.4s ease',
-                    borderRadius: '1px',
-                  }}
-                />
-              ))}
-            </div>
+          <div
+            className="flex flex-col items-center gap-1"
+            style={{ position: 'absolute', bottom: '2rem', left: '50%', transform: 'translateX(-50%)', pointerEvents: 'none' }}
+            aria-hidden="true"
+          >
+            <span className="font-mono text-xs" style={{ color: 'var(--color-muted)', letterSpacing: '0.1em' }}>scroll</span>
+            <ChevronDown size={16} style={{ color: 'var(--color-accent)', animation: 'bounce-y 1.6s ease-in-out infinite' }} />
           </div>
         </div>
 
-        {/* Scroll hint — solo en el primer slide */}
-        <div
-          className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center gap-1"
-          style={{
-            bottom: '2rem',
-            zIndex: 3,
-            opacity: activeIdx === 0 ? 1 : 0,
-            transition: 'opacity 0.4s ease',
-            pointerEvents: 'none',
-          }}
-          aria-hidden="true"
-        >
-          <span className="font-mono text-xs" style={{ color: 'var(--color-muted)', letterSpacing: '0.1em' }}>
-            scroll
-          </span>
-          <ChevronDown size={16} style={{ color: 'var(--color-accent)', animation: 'bounce-y 1.6s ease-in-out infinite' }} />
-        </div>
+        {/* Slides 2–7 — full-screen, vertically centered, glass bg */}
+        <div id="slide-problemas" style={slide}><Problemas /></div>
+        <div id="slide-servicios" style={slide}><Servicios /></div>
+        <div id="slide-rubros"    style={slide}><Rubros /></div>
+        <div id="slide-proceso"   style={slide}><Proceso /></div>
+        <div id="slide-confianza" style={slide}><Confianza /></div>
+        <div id="slide-contacto"  style={slide}><Contacto /></div>
       </div>
     </div>
   );

@@ -1,3 +1,9 @@
+'use client';
+
+import Image from 'next/image';
+import { useEffect } from 'react';
+import { scrollToElement } from '@/lib/smoothScroll';
+
 const waNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? '5493573431223';
 
 /* SVG dot-grid background — pure static, no JS */
@@ -67,20 +73,75 @@ const services = [
 ];
 
 export default function Hero() {
+  useEffect(() => {
+    const lock  = { active: false };
+    const ANIM  = 1100;
+    const GUARD = ANIM + 400; // 1500ms: animation + buffer for IntersectionObserver
+
+    let touchStartY = 0;
+
+    const heroInView = () => {
+      const el = document.getElementById('hero-section');
+      return el ? el.getBoundingClientRect().bottom > window.innerHeight * 0.25 : false;
+    };
+
+    const snapToEquipo = () => {
+      if (lock.active) return;
+      lock.active = true;
+      scrollToElement('equipo', ANIM);
+      setTimeout(() => { lock.active = false; }, GUARD);
+    };
+
+    const onWheel = (e: WheelEvent) => {
+      if (!heroInView()) return;
+      // Always block native scroll while Hero is active (is 100dvh, no inner scroll)
+      e.preventDefault();
+      if (e.deltaY > 0) snapToEquipo();
+    };
+
+    const onTouchStart = (e: TouchEvent) => { touchStartY = e.touches[0].clientY; };
+    const onTouchEnd   = (e: TouchEvent) => {
+      if (touchStartY - e.changedTouches[0].clientY > 50 && heroInView()) snapToEquipo();
+    };
+
+    window.addEventListener('wheel', onWheel, { passive: false });
+    window.addEventListener('touchstart', onTouchStart, { passive: true });
+    window.addEventListener('touchend',   onTouchEnd,   { passive: true });
+    return () => {
+      window.removeEventListener('wheel', onWheel);
+      window.removeEventListener('touchstart', onTouchStart);
+      window.removeEventListener('touchend',   onTouchEnd);
+    };
+  }, []);
+
   return (
     <section
-      className="section-pad relative overflow-hidden"
-      style={{ backgroundColor: 'var(--color-bg)' }}
+      id="hero-section"
+      className="section-pad relative overflow-hidden flex items-center"
+      style={{ backgroundColor: 'var(--color-bg)', minHeight: '100dvh', width: '100%' }}
       aria-labelledby="hero-title"
     >
+      {/* Background image with blur and dark overlay */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
+        <Image
+          src="/hero_fondo.png"
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          style={{ objectFit: 'cover', objectPosition: 'center', filter: 'blur(4px)', transform: 'scale(1.06)' }}
+        />
+        <div className="absolute inset-0" style={{ backgroundColor: 'rgba(10,14,22,0.78)' }} />
+      </div>
+
       {/* Dot-grid decorative background — right side */}
       <div className="absolute right-0 top-0 bottom-0 w-1/2 pointer-events-none overflow-hidden">
         <TechGrid />
       </div>
 
 
-<div className="relative max-w-6xl mx-auto px-4">
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_420px] gap-16 items-start">
+      <div className="relative max-w-6xl mx-auto px-4 sm:px-6 w-full" style={{ zIndex: 1 }}>
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_420px] gap-8 lg:gap-16 items-start">
 
           {/* ─── Left col ───────────────────────────────────── */}
           <div>
@@ -89,11 +150,11 @@ export default function Hero() {
               SOPORTE IT · CÓRDOBA CAPITAL
             </div>
 
-            {/* H1 — impactante */}
+            {/* H1 */}
             <h1
               id="hero-title"
-              className="font-sans font-bold leading-[0.95] tracking-tight mb-7 anim-fade-up d-1"
-              style={{ fontSize: 'clamp(3rem, 6.5vw, 5.2rem)', color: 'var(--color-text)' }}
+              className="font-sans font-bold leading-[0.95] tracking-tight mb-5 lg:mb-7 anim-fade-up d-1"
+              style={{ fontSize: 'clamp(2.4rem, 6.5vw, 5.2rem)', color: 'var(--color-text)' }}
             >
               Tu depar&shy;ta&shy;mento{' '}
               <span className="text-outline">IT</span>
@@ -105,15 +166,15 @@ export default function Hero() {
 
             {/* Subtitle */}
             <p
-              className="font-sans text-base mb-10 max-w-lg anim-fade-up d-2"
-              style={{ color: 'var(--color-muted)', lineHeight: 1.75, fontSize: '1.05rem' }}
+              className="font-sans text-base mb-7 lg:mb-10 max-w-lg anim-fade-up d-2"
+              style={{ color: 'var(--color-muted)', lineHeight: 1.75, fontSize: '1rem' }}
             >
               Soporte, mantenimiento y redes para estudios contables,
               colegios y clínicas en Córdoba Capital.
             </p>
 
             {/* CTAs */}
-            <div className="flex flex-wrap gap-4 anim-fade-up d-3">
+            <div className="flex flex-wrap gap-3 sm:gap-4 anim-fade-up d-3">
               <a
                 href={`https://wa.me/${waNumber}?text=Hola!%20Quiero%20consultar%20sobre%20soporte%20IT`}
                 target="_blank"
@@ -145,9 +206,9 @@ export default function Hero() {
             </p>
           </div>
 
-          {/* ─── Right col — terminal services ─────────────── */}
+          {/* ─── Right col — terminal services (solo desktop) ── */}
           <div
-            className="anim-fade-up d-2 lg:sticky"
+            className="hidden lg:block anim-fade-up d-2 lg:sticky"
             style={{ top: 'calc(var(--statusbar-height) + var(--nav-height) + 0.75rem)' }}
           >
             {/* Terminal header */}

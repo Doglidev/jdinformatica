@@ -1,8 +1,7 @@
 const items = [
-  { num: '8+',   label: 'Años en el mercado',   note: 'desde 2016',      ariaLabel: undefined },
-  { num: '150+', label: 'Clientes en Córdoba',  note: 'PyMEs activas',   ariaLabel: undefined },
-  { num: 'L–V',  label: '8hs a 20hs + guardias', note: 'atención directa', ariaLabel: 'Lunes a Viernes' },
-  { num: '$0',   label: 'Contratos mínimos',    note: 'sin letra chica', ariaLabel: undefined },
+  { num: '8+',  label: 'Años en el mercado',    note: 'desde 2016',       ariaLabel: undefined },
+  { num: 'L–V', label: '8hs a 20hs + guardias', note: 'atención directa', ariaLabel: 'Lunes a Viernes' },
+  { num: '$0',  label: 'Contratos mínimos',     note: 'sin letra chica',  ariaLabel: undefined },
 ];
 
 export default function Confianza() {
@@ -34,7 +33,7 @@ export default function Confianza() {
 
         <div className="accent-rule" />
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-px" style={{ backgroundColor: 'var(--color-border)' }}>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-px" style={{ backgroundColor: 'var(--color-border)' }}>
           {items.map(({ num, label, note, ariaLabel }, i) => (
             <div
               key={num}

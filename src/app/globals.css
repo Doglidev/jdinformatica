@@ -186,7 +186,7 @@ body::after {
 
 /* ─── SECTION PADDING ────────────────────────────────────────────── */
 .section-pad { padding: 6rem 0; }
-@media (max-width: 768px) { .section-pad { padding: 4rem 0; } }
+@media (max-width: 768px) { .section-pad { padding: 3rem 0; } }
 
 /* ─── ACCENT LINE ────────────────────────────────────────────────── */
 .accent-rule {
@@ -195,6 +195,7 @@ body::after {
   background: var(--color-border);
   margin-bottom: 3rem;
 }
+@media (max-width: 768px) { .accent-rule { margin-bottom: 1.75rem; } }
 
 /* ─── HOVER CARD ─────────────────────────────────────────────────── */
 .hover-card {
@@ -206,4 +207,21 @@ body::after {
   transform: translateY(-4px);
   border-color: var(--color-accent) !important;
   box-shadow: 0 8px 32px rgba(245,197,24,0.08);
+}
+/* Sin hover card lift en touch devices */
+@media (hover: none) { .hover-card:hover { transform: none; } }
+
+/* ─── RESPONSIVE ANIMATIONS ─────────────────────────────────────── */
+@media (max-width: 768px) {
+  .anim-fade-up { transform: translateY(12px); }
+  .d-3 { transition-delay: 120ms; }
+  .d-4 { transition-delay: 160ms; }
+  .d-5 { transition-delay: 200ms; }
+  .d-6 { transition-delay: 240ms; }
+}
+
+/* ─── RESPONSIVE TYPOGRAPHY ──────────────────────────────────────── */
+@media (max-width: 480px) {
+  .section-label { font-size: 0.55rem; letter-spacing: 0.13em; }
+  .tag-chip      { font-size: 0.6rem; padding: 2px 7px; }
 }
