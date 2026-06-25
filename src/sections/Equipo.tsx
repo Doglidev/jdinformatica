@@ -76,6 +76,8 @@ export default function Equipo() {
 
   // Snap scroll between all slides (and back to Hero from the first)
   useEffect(() => {
+    if (window.matchMedia('(max-width: 768px)').matches) return;
+
     const lock  = { active: false };
     const ANIM  = 1100;
     const GUARD = ANIM + 400; // 1500ms: animation + buffer for IntersectionObserver

@@ -74,6 +74,8 @@ const services = [
 
 export default function Hero() {
   useEffect(() => {
+    if (window.matchMedia('(max-width: 768px)').matches) return;
+
     const lock  = { active: false };
     const ANIM  = 1100;
     const GUARD = ANIM + 400; // 1500ms: animation + buffer for IntersectionObserver
