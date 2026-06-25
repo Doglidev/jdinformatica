@@ -137,7 +137,7 @@ export default function Hero() {
           sizes="100vw"
           style={{ objectFit: 'cover', objectPosition: 'center', filter: 'blur(4px)', transform: 'scale(1.06)' }}
         />
-        <div className="absolute inset-0" style={{ backgroundColor: 'rgba(10,14,22,0.78)' }} />
+        <div className="absolute inset-0" style={{ backgroundColor: 'rgba(10,14,22,0.55)' }} />
       </div>
 
       {/* Dot-grid decorative background — right side */}

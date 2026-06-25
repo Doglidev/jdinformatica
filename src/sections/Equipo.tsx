@@ -143,7 +143,7 @@ export default function Equipo() {
   }, []);
 
   return (
-    <div id="equipo" ref={containerRef} role="region" aria-label="Contenido principal" style={{ position: 'relative' }}>
+    <div id="equipo" ref={containerRef} role="region" aria-label="Contenido principal" style={{ position: 'relative', isolation: 'isolate' }}>
 
       {/* Sticky background — stays fixed behind all sections as the user scrolls */}
       <div
@@ -181,8 +181,8 @@ export default function Equipo() {
           </div>
         ))}
         {/* Gradient overlays */}
-        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(10,14,22,0.97) 0%, rgba(10,14,22,0.82) 50%, rgba(10,14,22,0.65) 100%)' }} />
-        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, rgba(10,14,22,0.7) 0%, rgba(10,14,22,0.1) 60%, transparent 100%)' }} />
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(10,14,22,0.85) 0%, rgba(10,14,22,0.60) 50%, rgba(10,14,22,0.40) 100%)' }} />
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, rgba(10,14,22,0.50) 0%, rgba(10,14,22,0.05) 60%, transparent 100%)' }} />
       </div>
 
       {/* All sections in normal document flow, stacked above the sticky background */}
