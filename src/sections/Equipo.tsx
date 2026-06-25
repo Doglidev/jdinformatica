@@ -116,6 +116,8 @@ export default function Equipo() {
     };
 
     const onTouchStart = (e: TouchEvent) => { touchStartY = e.touches[0].clientY; };
+    // passive: false → bloquea el scroll momentum nativo de iOS Safari mientras estamos en Equipo
+    const onTouchMove  = (e: TouchEvent) => { if (isInEquipo()) e.preventDefault(); };
     const onTouchEnd   = (e: TouchEvent) => {
       if (!isInEquipo() || lock.active) return;
       const cur   = activeImgRef.current;
@@ -126,12 +128,14 @@ export default function Equipo() {
       else if (delta < -50 && cur === 0)                  snapToHero();
     };
 
-    window.addEventListener('wheel', onWheel, { passive: false });
-    window.addEventListener('touchstart', onTouchStart, { passive: true });
-    window.addEventListener('touchend',   onTouchEnd,   { passive: true });
+    window.addEventListener('wheel',      onWheel,      { passive: false });
+    window.addEventListener('touchstart', onTouchStart, { passive: true  });
+    window.addEventListener('touchmove',  onTouchMove,  { passive: false });
+    window.addEventListener('touchend',   onTouchEnd,   { passive: true  });
     return () => {
-      window.removeEventListener('wheel', onWheel);
+      window.removeEventListener('wheel',      onWheel);
       window.removeEventListener('touchstart', onTouchStart);
+      window.removeEventListener('touchmove',  onTouchMove);
       window.removeEventListener('touchend',   onTouchEnd);
     };
   }, []);

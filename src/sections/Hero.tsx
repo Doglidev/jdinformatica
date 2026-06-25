@@ -100,16 +100,20 @@ export default function Hero() {
     };
 
     const onTouchStart = (e: TouchEvent) => { touchStartY = e.touches[0].clientY; };
+    // passive: false → podemos llamar preventDefault() y bloquear el scroll momentum de iOS
+    const onTouchMove  = (e: TouchEvent) => { if (heroInView()) e.preventDefault(); };
     const onTouchEnd   = (e: TouchEvent) => {
       if (touchStartY - e.changedTouches[0].clientY > 50 && heroInView()) snapToEquipo();
     };
 
-    window.addEventListener('wheel', onWheel, { passive: false });
-    window.addEventListener('touchstart', onTouchStart, { passive: true });
-    window.addEventListener('touchend',   onTouchEnd,   { passive: true });
+    window.addEventListener('wheel',      onWheel,      { passive: false });
+    window.addEventListener('touchstart', onTouchStart, { passive: true  });
+    window.addEventListener('touchmove',  onTouchMove,  { passive: false });
+    window.addEventListener('touchend',   onTouchEnd,   { passive: true  });
     return () => {
-      window.removeEventListener('wheel', onWheel);
+      window.removeEventListener('wheel',      onWheel);
       window.removeEventListener('touchstart', onTouchStart);
+      window.removeEventListener('touchmove',  onTouchMove);
       window.removeEventListener('touchend',   onTouchEnd);
     };
   }, []);
