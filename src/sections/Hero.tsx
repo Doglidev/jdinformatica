@@ -162,12 +162,12 @@ export default function Hero() {
               className="font-sans font-bold leading-[0.95] tracking-tight mb-5 lg:mb-7 anim-fade-up d-1"
               style={{ fontSize: 'clamp(2.4rem, 6.5vw, 5.2rem)', color: 'var(--color-text)' }}
             >
-              Tu depar&shy;ta&shy;mento{' '}
+              El depar&shy;ta&shy;mento{' '}
               <span className="text-outline">IT</span>
               ,<br />
-              <span style={{ color: 'var(--color-text)' }}>sin contratar</span>
+              <span style={{ color: 'var(--color-text)' }}>externo</span>
               <br />
-              <span style={{ color: 'var(--color-accent)' }}>uno.</span>
+              <span style={{ color: 'var(--color-accent)' }}>que necesitas.</span>
             </h1>
 
             {/* Subtitle */}
